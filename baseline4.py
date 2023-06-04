@@ -108,7 +108,6 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device):
                    "Train Acc": train_acc,
                    "lr" : optimizer.param_groups[0]['lr']})
         
-    print(f'Best Epoch : [{best_epoch}] Best Score : [{best_score:.5f}]')
     return best_model
 
 def validation(model, criterion, val_loader, device):
