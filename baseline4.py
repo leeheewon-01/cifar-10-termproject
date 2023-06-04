@@ -63,10 +63,6 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device):
 
     criterion = ASLSingleLabel().to(device)
     
-    best_score = 0
-    best_epoch = 0
-    best_model = None
-
     for epoch in range(1, CFG['EPOCHS']+1):
         model.train()
         train_loss = []
@@ -97,18 +93,13 @@ def train(model, optimizer, train_loader, val_loader, scheduler, device):
         # scheduler with warmup
         scheduler.step()
         
-        if best_score < _val_score:
-            best_score = _val_score
-            best_epoch = epoch
-            best_model = model
-
         wandb.log({"Val Loss": _val_loss,
                    "Val Acc": _val_score,
                    "Train Loss": _train_loss,
                    "Train Acc": train_acc,
                    "lr" : optimizer.param_groups[0]['lr']})
         
-    return best_model
+    return model
 
 def validation(model, criterion, val_loader, device):
     model.eval()
