@@ -52,21 +52,21 @@ preds = []
 #         correct += (predicted == labels).sum().item()
 
 # # soft voting
-# with torch.no_grad():
-#     for data in tqdm(testloader):
-#         images, labels = data
-#         images, labels = images.to(device), labels.to(device)  # Move the input data to the GPU
-#         bs, ncrops, c, h, w = images.size()       
-#         outputs = torch.zeros(bs, 10).to(device)
-#         for model in models:
-#             model_output = model(images.view(-1, c, h, w))
-#             model_output = model_output.view(bs, ncrops, -1).mean(1)
-#             model_output = F.softmax(model_output, dim=1)  # apply softmax to get probabilities
-#             outputs += model_output
-#         outputs /= len(models)  # average the probabilities
-#         _, predicted = torch.max(outputs.data, 1)
-#         total += labels.size(0)
-#         correct += (predicted == labels).sum().item()
+with torch.no_grad():
+    for data in tqdm(testloader):
+        images, labels = data
+        images, labels = images.to(device), labels.to(device)  # Move the input data to the GPU
+        bs, ncrops, c, h, w = images.size()       
+        outputs = torch.zeros(bs, 10).to(device)
+        for model in models:
+            model_output = model(images.view(-1, c, h, w))
+            model_output = model_output.view(bs, ncrops, -1).mean(1)
+            model_output = F.softmax(model_output, dim=1)  # apply softmax to get probabilities
+            outputs += model_output
+        outputs /= len(models)  # average the probabilities
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
 
 
 
@@ -76,23 +76,23 @@ preds, true_labels = [], []
 
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-with torch.no_grad():
-    for imgs, labels in tqdm(iter(testloader)):
-        imgs = imgs.float().to(device)
-        labels = labels.to(device)
+# with torch.no_grad():
+#     for imgs, labels in tqdm(iter(testloader)):
+#         imgs = imgs.float().to(device)
+#         labels = labels.to(device)
         
-        bs, ncrops, c, h, w = imgs.size()
-        outputs = torch.zeros(bs, 10).to(device)
-        for model in models:
-            model_output = model(imgs.view(-1, c, h, w))
-            model_output = model_output.view(bs, ncrops, -1).mean(1)
-            outputs += model_output
+#         bs, ncrops, c, h, w = imgs.size()
+#         outputs = torch.zeros(bs, 10).to(device)
+#         for model in models:
+#             model_output = model(imgs.view(-1, c, h, w))
+#             model_output = model_output.view(bs, ncrops, -1).mean(1)
+#             outputs += model_output
 
-        preds += outputs.argmax(1).detach().cpu().numpy().tolist()
-        true_labels += labels.detach().cpu().numpy().tolist()
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
+#         preds += outputs.argmax(1).detach().cpu().numpy().tolist()
+#         true_labels += labels.detach().cpu().numpy().tolist()
+#         _, predicted = torch.max(outputs.data, 1)
+#         total += labels.size(0)
+#         correct += (predicted == labels).sum().item()
 
 report_df = pd.DataFrame(classification_report(true_labels, preds, target_names=class_names, output_dict=True)).transpose()
 print(report_df)
