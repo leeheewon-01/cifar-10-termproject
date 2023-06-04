@@ -149,9 +149,9 @@ for s in range(model_num):
     model = nn.DataParallel(model, device_ids=[0, 1], dim=0, output_device=0)
     model.load_state_dict(torch.load('./Models/model_9741.pt'))
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=CFG['Learning_rate'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=CFG['Learning_rate'], weight_decay=2.5e-4)
 
-    exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
+    exp_lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=CFG['EPOCHS'], eta_min=0)
 
     infer_model = train(model, optimizer, train_loader, test_loader, exp_lr_scheduler, device)
 
