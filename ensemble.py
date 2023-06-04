@@ -76,23 +76,23 @@ preds, true_labels = [], []
 
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-# with torch.no_grad():
-#     for imgs, labels in tqdm(iter(testloader)):
-#         imgs = imgs.float().to(device)
-#         labels = labels.to(device)
+with torch.no_grad():
+    for imgs, labels in tqdm(iter(testloader)):
+        imgs = imgs.float().to(device)
+        labels = labels.to(device)
         
-#         bs, ncrops, c, h, w = imgs.size()
-#         outputs = torch.zeros(bs, 10).to(device)
-#         for model in models:
-#             model_output = model(imgs.view(-1, c, h, w))
-#             model_output = model_output.view(bs, ncrops, -1).mean(1)
-#             outputs += model_output
+        bs, ncrops, c, h, w = imgs.size()
+        outputs = torch.zeros(bs, 10).to(device)
+        for model in models:
+            model_output = model(imgs.view(-1, c, h, w))
+            model_output = model_output.view(bs, ncrops, -1).mean(1)
+            outputs += model_output
 
-#         preds += outputs.argmax(1).detach().cpu().numpy().tolist()
-#         true_labels += labels.detach().cpu().numpy().tolist()
-#         _, predicted = torch.max(outputs.data, 1)
-#         total += labels.size(0)
-#         correct += (predicted == labels).sum().item()
+        preds += outputs.argmax(1).detach().cpu().numpy().tolist()
+        true_labels += labels.detach().cpu().numpy().tolist()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
 
 report_df = pd.DataFrame(classification_report(true_labels, preds, target_names=class_names, output_dict=True)).transpose()
 print(report_df)
