@@ -25,7 +25,7 @@ CFG = {
     'Learning_rate': 1e-4,
     'EPOCHS': 100,
     'BATCH_SIZE': 16,
-    'Note': 'baselinev4, Adam, Step, ASL, imgsz 224, bz 16',
+    'Note': 'baselinev4, SGD, Step, ASL, imgsz 224, bz 16',
 }
 
 def seed_everything(seed):
@@ -149,7 +149,7 @@ for s in range(model_num):
     model = nn.DataParallel(model, device_ids=[0, 1], dim=0, output_device=0)
     model.load_state_dict(torch.load('./Models/model_9741.pt'))
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=CFG['Learning_rate'])
+    optimizer = torch.optim.SGD(model.parameters(), lr=CFG['Learning_rate'])
 
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
 
